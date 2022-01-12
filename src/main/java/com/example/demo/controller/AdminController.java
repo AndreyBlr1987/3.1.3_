@@ -4,6 +4,7 @@ import com.example.demo.entity.User;
 import com.example.demo.service.RoleService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +31,9 @@ public class AdminController {
     }
 
     @GetMapping()
-    public String allUsers(Model model) {
+    public String allUsers(@AuthenticationPrincipal User user, Model model) {
         List<User> users = userService.allUsers();
+        model.addAttribute("user", user);
         model.addAttribute("usersList", users);
         return "users";
     }
@@ -56,13 +58,13 @@ public class AdminController {
     public String addPage(Model model) {
         User user = new User();
         model.addAttribute("roles", roleService.getAllRoles());
-        model.addAttribute("user",user);
+        model.addAttribute("user", user);
         return "new";
     }
 
     @PostMapping(value = "/add")
     public String addUser(@ModelAttribute User user,
-                          @RequestParam(value = "roles") String [] roles) {
+                          @RequestParam(value = "roles") String[] roles) {
         user.setRoles(roleService.getSetOfRoles(roles));
         userService.add(user);
         return "redirect:/admin";
@@ -73,7 +75,5 @@ public class AdminController {
         userService.delete(userService.getById(id));
         return "redirect:/admin";
     }
-
-
 }
 

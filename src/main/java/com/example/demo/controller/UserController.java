@@ -15,9 +15,5 @@ public class UserController {
         model.addAttribute("user", user);
         return "user";
     }
-
-    @GetMapping("hello")
-    public String hello(){
-        return "hello";
-    }
 }
+
