@@ -14,10 +14,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void add(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.add(user);
     }
 
@@ -41,6 +44,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void edit(User user) {
+        if( user.getPassword() == "")
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.edit(user);
     }
 
